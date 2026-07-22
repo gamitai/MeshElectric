@@ -15,6 +15,7 @@ var SHEET_NAME = 'מחשבון';
 var INPUT_RANGE     = 'B2:B9';   // ערכי הקלט שהלקוח ממלא
 var INPUT_LABELS    = 'A2:A9';   // שמות שדות הקלט
 var INPUT_UNITS     = 'C2:C9';   // יחידות (שח / kw / שנים ...)
+var INPUT_HIDDEN_ROWS = [3];     // שורות קלט שלא יוצגו ללקוח (הערך בגיליון נשמר ומשמש לחישוב). 3 = שכירות לפרוייקט
 var INPUT_HINT_CELL  = 'A10';     // הערת עזר למטר-לקילוואט
 var BLOCK_EXTRA      = 'A34:C35'; // שדות (שטח פנלים, גודל מתקן אגירה)
 var BLOCK_INVESTOR   = 'A25:C30'; // פיננסי למשקיע (ללא שורת ה-IRR שמוצגת בכרטיס נפרד)
@@ -50,9 +51,11 @@ function getInputs() {
 
   var inputs = [];
   for (var i = 0; i < labels.length; i++) {
+    var row = 2 + i;
+    if (INPUT_HIDDEN_ROWS.indexOf(row) > -1) continue;   // שדה מוסתר – לא נשלח ללקוח
     var isPct = String(formats[i][0]).indexOf('%') > -1;
     inputs.push({
-      row: 2 + i,
+      row: row,
       label: labels[i][0],
       value: isPct ? Math.round(values[i][0] * 10000) / 100 : values[i][0],
       unit: isPct ? '%' : units[i][0],
